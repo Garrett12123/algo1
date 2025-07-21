@@ -1,6 +1,6 @@
-# 🎮 Algo1 - Retro Algorithm Visualizer
+# Algo1 - Algorithm Visualizer
 
-> **A stunning retro-cyberpunk algorithm visualization platform built with Modern C++20**
+> **A stunning algorithm visualization platform built with Modern C++20**
 
 *Developed by Garrett Flowers & Seth Deloney • Educational Tool • 2025*
 
