@@ -6,52 +6,55 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [⚡ Overview](#-overview)
-- [🚀 Quick Start](#-quick-start)
+- [Overview](#overview)
+- [Quick Start](#quick-start)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Troubleshooting](#troubleshooting)
-- [🎯 Algorithm Library](#-algorithm-library)
-  - [🔄 Sorting Algorithms](#-sorting-algorithms)
-  - [🔍 Search Algorithms](#-search-algorithms)
-  - [🗺️ Pathfinding Algorithms](#️-pathfinding-algorithms)
-  - [🕸️ Graph Algorithms](#️-graph-algorithms)
-  - [🌳 Tree Algorithms](#-tree-algorithms)
-- [🎨 Themes & Customization](#-themes--customization)
-- [📊 Performance Analysis](#-performance-analysis)
-- [🏗️ Project Architecture](#️-project-architecture)
-- [🛠️ Technology Stack](#️-technology-stack)
-- [🎓 Educational Use](#-educational-use)
-- [🚀 Advanced Features](#-advanced-features)
-- [🔧 Build Configurations](#-build-configurations)
-- [📈 Performance Benchmarks](#-performance-benchmarks)
-- [🤝 Contributing](#-contributing)
-- [📄 License & Attribution](#-license--attribution)
-- [📸 Screenshots](#-screenshots)
-- [🌟 Showcase](#-showcase)
+- [Algorithm Library](#algorithm-library)
+  - [Sorting Algorithms](#sorting-algorithms)
+  - [Search Algorithms](#search-algorithms)
+  - [Pathfinding Algorithms](#pathfinding-algorithms)
+  - [Graph Algorithms](#graph-algorithms)
+  - [Tree Algorithms](#tree-algorithms)
+- [Themes & Customization](#themes--customization)
+- [Performance Analysis](#performance-analysis)
+- [Project Architecture](#project-architecture)
+- [Technology Stack](#technology-stack)
+- [Educational Use](#educational-use)
+- [Advanced Features](#advanced-features)
+- [Build Configurations](#build-configurations)
+- [Performance Benchmarks](#performance-benchmarks)
+- [Contributing](#contributing)
+- [License & Attribution](#license--attribution)
+- [Screenshots](#screenshots)
+- [Showcase](#showcase)
 
 ---
 
-## ⚡ Overview
+## Overview
 
 **Algo1** is a comprehensive, interactive algorithm visualization application that brings computer science concepts to life through beautiful real-time animations, retro aesthetics, and immersive audio feedback. Built with cutting-edge C++20 features and modern GUI technologies.
 
-### 🌟 Key Features
+### Key Features
 
-- **🎯 5 Algorithm Categories** - Sorting, Search, Pathfinding, Graph, and Tree algorithms
-- **🎨 6 Beautiful Themes** - Dark, Light, Cyberpunk, Ocean, Forest, and Sunset
-- **🔊 Audio Feedback** - Immersive sound effects synchronized with algorithm steps
-- **📊 Performance Analysis** - Real-time metrics, benchmarking, and export capabilities
-- **🎮 Retro Splash Screen** - Cyberpunk-styled loading experience
-- **📈 Step-by-Step Visualization** - Interactive controls with play, pause, and manual stepping
-- **💾 Data Export** - Export results in CSV, JSON, or XML formats
-- **🎓 Educational Focus** - Detailed algorithm information and complexity analysis
+- **5 Algorithm Categories** - Sorting, Search, Pathfinding, Graph, and Tree algorithms
+- **6 Beautiful Themes** - Dark, Light, Cyberpunk, Ocean, Forest, and Sunset
+- **Audio Feedback** - Immersive sound effects synchronized with algorithm steps
+- **Performance Analysis** - Real-time metrics, benchmarking, and export capabilities
+- **Retro Splash Screen** - Cyberpunk-styled loading experience
+- **Step-by-Step Visualization** - Interactive controls with play, pause, and manual stepping
+- **Data Export** - Export results in CSV, JSON, or XML formats
+- **Educational Focus** - Detailed algorithm information and complexity analysis
+
+![Pathfinding with A* Algorithm](public/PathFinding.png)
+*A* pathfinding algorithm navigating through a complex maze with real-time statistics and algorithm details*
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -153,9 +156,9 @@ cmake --build --preset=default
 
 ---
 
-## 🎯 Algorithm Library
+## Algorithm Library
 
-### 🔄 Sorting Algorithms
+### Sorting Algorithms
 - **Bubble Sort** - O(n²) - Simple comparison-based algorithm
 - **Selection Sort** - O(n²) - Finds minimum and places at beginning
 - **Insertion Sort** - O(n²) - Builds sorted array incrementally
@@ -166,26 +169,26 @@ cmake --build --preset=default
 - **Intro Sort** - O(n log n) - Hybrid quicksort/heapsort
 - **Patience Sort** - O(n log n) - Based on patience card game
 
-### 🔍 Search Algorithms
+### Search Algorithms
 - **Linear Search** - O(n) - Sequential array traversal
 - **Binary Search** - O(log n) - Efficient sorted array search
 - **Interpolation Search** - O(log log n) - Position estimation search
 - **Exponential Search** - O(log n) - Exponential jumps then binary
 - **Jump Search** - O(√n) - Fixed-size jump optimization
 
-### 🗺️ Pathfinding Algorithms
+### Pathfinding Algorithms
 - **A\*** - Optimal pathfinding with heuristic guidance
 - **Dijkstra** - Shortest path with guaranteed optimality
 - **Breadth-First Search** - Unweighted shortest path exploration
 - **Depth-First Search** - Deep exploration pathfinding
 
-### 🕸️ Graph Algorithms
+### Graph Algorithms
 - **Kruskal's MST** - O(E log E) - Minimum spanning tree with union-find
 - **Prim's MST** - O(V²) - Greedy minimum spanning tree
 - **Topological Sort** - O(V + E) - Linear vertex ordering
 - **Strongly Connected Components** - O(V + E) - SCC detection
 
-### 🌳 Tree Algorithms
+### Tree Algorithms
 - **Binary Search Tree** - Dynamic ordered tree structure
 - **AVL Tree** - Self-balancing BST with rotation
 - **Red-Black Tree** - Balanced tree with color properties
@@ -193,7 +196,7 @@ cmake --build --preset=default
 
 ---
 
-## 🎨 Themes & Customization
+## Themes & Customization
 
 | Theme | Description | Color Palette |
 |-------|-------------|---------------|
@@ -206,7 +209,7 @@ cmake --build --preset=default
 
 ---
 
-## 📊 Performance Analysis
+## Performance Analysis
 
 ### Real-time Metrics
 - **Execution Time** - Millisecond precision timing
@@ -223,7 +226,7 @@ cmake --build --preset=default
 
 ---
 
-## 🏗️ Project Architecture
+## Project Architecture
 
 ```
 algo1/
@@ -249,7 +252,7 @@ algo1/
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
@@ -264,7 +267,7 @@ algo1/
 
 ---
 
-## 🎓 Educational Use
+## Educational Use
 
 ### Learning Objectives
 - **Algorithm Complexity** - Understand Big O notation through visualization
@@ -282,7 +285,7 @@ algo1/
 
 ---
 
-## 🚀 Advanced Features
+## Advanced Features
 
 ### Performance Optimization
 - **Multi-threading** - Concurrent algorithm execution
@@ -298,7 +301,7 @@ algo1/
 
 ---
 
-## 🔧 Build Configurations
+## Build Configurations
 
 ### CMake Presets
 
@@ -323,7 +326,7 @@ cmake --build --preset=default
 
 ---
 
-## 📈 Performance Benchmarks
+## Performance Benchmarks
 
 | Algorithm | Small Arrays (50) | Medium Arrays (500) | Large Arrays (5000) |
 |-----------|-------------------|---------------------|---------------------|
@@ -336,7 +339,7 @@ cmake --build --preset=default
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Areas for enhancement:
 - **New Algorithms** - Additional sorting, search, or graph algorithms
@@ -347,7 +350,7 @@ We welcome contributions! Areas for enhancement:
 
 ---
 
-## 📄 License & Attribution
+## License & Attribution
 
 ### Core Application
 - **License**: MIT License
@@ -363,35 +366,31 @@ We welcome contributions! Areas for enhancement:
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
-### 🗺️ Pathfinding Visualization
-![Pathfinding with A* Algorithm](public/PathFinding.png)
-*A* pathfinding algorithm navigating through a complex maze with real-time statistics and algorithm details*
-
-### 📊 Performance Analysis Dashboard  
+### Performance Analysis Dashboard  
 ![Performance Analysis](public/Analysis.png)
 *Comprehensive performance monitoring with algorithm benchmarks, execution metrics, and optimization tips*
 
-### 🕸️ Graph Algorithm Visualization
+### Graph Algorithm Visualization
 ![Kruskal's MST Algorithm](public/Graph.png)
 *Kruskal's Minimum Spanning Tree algorithm with interactive graph visualization and detailed statistics*
 
-### 🔄 Sorting Algorithm in Action
+### Sorting Algorithm in Action
 ![Bubble Sort Visualization](public/Sorting.png)
 *Step-by-step Bubble Sort visualization with color-coded comparisons, swaps, and real-time progress tracking*
 
-### 💾 Data Export Capabilities
+### Data Export Capabilities
 ![Export Results Dialog](public/Export.png)
 *Flexible data export options supporting CSV, JSON, and XML formats with customizable data selection*
 
 ---
 
-## 🌟 Showcase
+## Showcase
 
 *Experience the future of algorithm education with Algo1's retro-cyberpunk aesthetic, real-time performance analysis, and immersive audio feedback. Whether you're a student learning algorithms or an educator teaching computer science, Algo1 provides an engaging and comprehensive platform for algorithm visualization.*
 
-**🎮 Ready to explore algorithms like never before?**
+**Ready to explore algorithms like never before?**
 
 ```bash
 git clone https://github.com/Garrett12123/algo1.git
