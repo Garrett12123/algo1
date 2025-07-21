@@ -29,6 +29,7 @@
 - [📈 Performance Benchmarks](#-performance-benchmarks)
 - [🤝 Contributing](#-contributing)
 - [📄 License & Attribution](#-license--attribution)
+- [📸 Screenshots](#-screenshots)
 - [🌟 Showcase](#-showcase)
 
 ---
@@ -359,6 +360,30 @@ We welcome contributions! Areas for enhancement:
 - **OpenAL-Soft** - LGPL v2.1 License
 - **fmt** - MIT License (Victor Zverovich)
 - **ImPlot** - MIT License (Evan Pezent)
+
+---
+
+## 📸 Screenshots
+
+### 🗺️ Pathfinding Visualization
+![Pathfinding with A* Algorithm](public/pathfinding-astar.png)
+*A* pathfinding algorithm navigating through a complex maze with real-time statistics and algorithm details*
+
+### 📊 Performance Analysis Dashboard  
+![Performance Analysis](public/performance-analysis.png)
+*Comprehensive performance monitoring with algorithm benchmarks, execution metrics, and optimization tips*
+
+### 🕸️ Graph Algorithm Visualization
+![Kruskal's MST Algorithm](public/graph-kruskal-mst.png)
+*Kruskal's Minimum Spanning Tree algorithm with interactive graph visualization and detailed statistics*
+
+### 🔄 Sorting Algorithm in Action
+![Bubble Sort Visualization](public/sorting-bubble-sort.png)
+*Step-by-step Bubble Sort visualization with color-coded comparisons, swaps, and real-time progress tracking*
+
+### 💾 Data Export Capabilities
+![Export Results Dialog](public/export-results.png)
+*Flexible data export options supporting CSV, JSON, and XML formats with customizable data selection*
 
 ---
 
