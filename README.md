@@ -50,8 +50,8 @@
 - **Data Export** - Export results in CSV, JSON, or XML formats
 - **Educational Focus** - Detailed algorithm information and complexity analysis
 
-![Pathfinding with A* Algorithm](public/PathFinding.png)
-*A* pathfinding algorithm with retro neon styling, animated effects, and comprehensive algorithm analysis*
+![Sorting Algorithm Visualization](public/Sorting.png)
+*Step-by-step sorting algorithm visualization with retro UI effects, animated progress bars, and real-time performance tracking*
 
 ---
 
@@ -378,13 +378,13 @@ Please follow our contribution guidelines and code style when submitting pull re
 
 ## Screenshots
 
-### Sorting Algorithm in Action
-![Bubble Sort Visualization](public/Sorting.png)
-*Step-by-step sorting algorithm visualization with retro UI effects, color-coded comparisons, and real-time performance tracking*
-
 ### Pathfinding Algorithm Visualization
 ![A* Pathfinding Algorithm](public/PathFinding.png)
 *A* pathfinding algorithm with interactive grid, retro neon styling, and comprehensive algorithm statistics*
+
+### Sorting Algorithm in Action  
+![Sorting Algorithm Visualization](public/Sorting.png)
+*Step-by-step sorting algorithm visualization with retro UI effects, color-coded comparisons, and real-time performance tracking*
 
 ---
 
