@@ -6,6 +6,33 @@
 
 ---
 
+## 📋 Table of Contents
+
+- [⚡ Overview](#-overview)
+- [🚀 Quick Start](#-quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Troubleshooting](#troubleshooting)
+- [🎯 Algorithm Library](#-algorithm-library)
+  - [🔄 Sorting Algorithms](#-sorting-algorithms)
+  - [🔍 Search Algorithms](#-search-algorithms)
+  - [🗺️ Pathfinding Algorithms](#️-pathfinding-algorithms)
+  - [🕸️ Graph Algorithms](#️-graph-algorithms)
+  - [🌳 Tree Algorithms](#-tree-algorithms)
+- [🎨 Themes & Customization](#-themes--customization)
+- [📊 Performance Analysis](#-performance-analysis)
+- [🏗️ Project Architecture](#️-project-architecture)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [🎓 Educational Use](#-educational-use)
+- [🚀 Advanced Features](#-advanced-features)
+- [🔧 Build Configurations](#-build-configurations)
+- [📈 Performance Benchmarks](#-performance-benchmarks)
+- [🤝 Contributing](#-contributing)
+- [📄 License & Attribution](#-license--attribution)
+- [🌟 Showcase](#-showcase)
+
+---
+
 ## ⚡ Overview
 
 **Algo1** is a comprehensive, interactive algorithm visualization application that brings computer science concepts to life through beautiful real-time animations, retro aesthetics, and immersive audio feedback. Built with cutting-edge C++20 features and modern GUI technologies.
