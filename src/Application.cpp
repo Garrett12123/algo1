@@ -27,9 +27,16 @@
 
 namespace AlgorithmVisualizer {
 
-Application::Application() = default;
+// Global application instance for retro UI effects
+Application* g_application = nullptr;
 
-Application::~Application() = default;
+Application::Application() {
+    g_application = this;
+}
+
+Application::~Application() {
+    g_application = nullptr;
+}
 
 bool Application::Initialize() {
     if (!InitializeGLFW()) {
@@ -337,11 +344,6 @@ void Application::RenderUI() {
     
     RenderMainContent();
     
-    // Render theme selector window
-    if (m_showThemeSelector) {
-        RenderThemeSelector();
-    }
-    
     // Render info windows
     if (m_showAlgorithmInfo) {
         RenderAlgorithmInfo();
@@ -414,8 +416,7 @@ void Application::RenderMenuBar() {
                 m_currentTheme = Theme::Sunset;
                 ApplyTheme(m_currentTheme);
             }
-            ImGui::Separator();
-            ImGui::MenuItem("More Themes...", nullptr, &m_showThemeSelector);
+
             ImGui::EndMenu();
         }
         
@@ -442,10 +443,6 @@ void Application::RenderMenuBar() {
         ImGui::EndMainMenuBar();
     }
     
-    // Render theme selector window
-    if (m_showThemeSelector) {
-        RenderThemeSelector();
-    }
 }
 
 void Application::RenderMainContent() {
@@ -517,13 +514,33 @@ bool Application::InitializeImGui() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    // Keyboard and gamepad navigation disabled to prevent slider input conflicts
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+    
+    // Additional slider-specific configuration
+    io.ConfigInputTextCursorBlink = true;
+    io.ConfigInputTrickleEventQueue = true;
+    io.ConfigWindowsMoveFromTitleBarOnly = false;
 
-    // Increase font scale for better readability
-    io.FontGlobalScale = 1.2f;
+    // Configure enhanced default font for better readability
+    ImFontConfig config;
+    config.SizePixels = 16.0f;           // Larger font size
+    config.OversampleH = 3;              // Better horizontal anti-aliasing
+    config.OversampleV = 2;              // Better vertical anti-aliasing
+    config.PixelSnapH = true;            // Crisp horizontal alignment
+    config.RasterizerMultiply = 1.2f;    // Slightly bolder text
+    
+    // Clear default fonts and add enhanced version
+    io.Fonts->Clear();
+    io.Fonts->AddFontDefault(&config);
+    
+    fmt::print("Loaded enhanced default font for better readability\n");
+    
+    // Set font scale for better readability
+    io.FontGlobalScale = 1.0f;
 
     SetupImGuiStyle();
     ApplyTheme(m_currentTheme);
@@ -541,6 +558,332 @@ bool Application::InitializeImGui() {
     }
     
     return true;
+}
+
+// Retro UI Effects Implementation
+ImVec4 Application::GetRainbowColor(float progress, float time) {
+    // Create a shifting rainbow effect based on progress and time
+    float hue = fmod(progress * 360.0f + time * 30.0f, 360.0f) / 360.0f;
+    float saturation = 0.8f + 0.2f * sin(time * 2.0f);
+    float value = 0.9f + 0.1f * sin(time * 3.0f);
+    
+    // Convert HSV to RGB
+    int h_i = (int)(hue * 6);
+    float f = hue * 6 - h_i;
+    float p = value * (1 - saturation);
+    float q = value * (1 - f * saturation);
+    float t = value * (1 - (1 - f) * saturation);
+    
+    float r, g, b;
+    switch (h_i) {
+        case 0: r = value; g = t; b = p; break;
+        case 1: r = q; g = value; b = p; break;
+        case 2: r = p; g = value; b = t; break;
+        case 3: r = p; g = q; b = value; break;
+        case 4: r = t; g = p; b = value; break;
+        case 5: r = value; g = p; b = q; break;
+        default: r = g = b = value; break;
+    }
+    
+    return ImVec4(r, g, b, 1.0f);
+}
+
+void Application::DrawAnimatedProgressBar(float progress, const ImVec2& size, const char* overlay) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+    ImVec2 barSize = (size.x < 0) ? ImVec2(ImGui::GetContentRegionAvail().x, 20) : size;
+    
+    // Get current time for animations
+    float time = ImGui::GetTime();
+    
+    // Background
+    ImU32 bgColor = IM_COL32(40, 40, 40, 255);
+    drawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + barSize.x, cursorPos.y + barSize.y), bgColor, 3.0f);
+    
+    // Animated progress fill with color shifting
+    if (progress > 0.0f) {
+        float fillWidth = barSize.x * progress;
+        
+        // Create gradient effect with rainbow colors
+        for (int i = 0; i < (int)fillWidth; i += 2) {
+            float localProgress = (float)i / barSize.x;
+            ImVec4 color = GetRainbowColor(localProgress, time);
+            ImU32 fillColor = IM_COL32((int)(color.x * 255), (int)(color.y * 255), (int)(color.z * 255), 255);
+            
+            drawList->AddRectFilled(
+                ImVec2(cursorPos.x + i, cursorPos.y + 1),
+                ImVec2(cursorPos.x + std::min(i + 2, (int)fillWidth), cursorPos.y + barSize.y - 1),
+                fillColor
+            );
+        }
+        
+        // Add animated glow effect
+        float glowIntensity = 0.3f + 0.2f * sin(time * 4.0f);
+        ImVec4 glowColor = GetRainbowColor(progress, time);
+        glowColor.w = glowIntensity;
+        ImU32 glowU32 = IM_COL32((int)(glowColor.x * 255), (int)(glowColor.y * 255), (int)(glowColor.z * 255), (int)(glowColor.w * 100));
+        
+        // Outer glow
+        drawList->AddRect(
+            ImVec2(cursorPos.x - 1, cursorPos.y - 1),
+            ImVec2(cursorPos.x + fillWidth + 1, cursorPos.y + barSize.y + 1),
+            glowU32, 3.0f, 0, 2.0f
+        );
+    }
+    
+    // Border
+    ImU32 borderColor = IM_COL32(100, 100, 100, 255);
+    drawList->AddRect(cursorPos, ImVec2(cursorPos.x + barSize.x, cursorPos.y + barSize.y), borderColor, 3.0f, 0, 1.0f);
+    
+    // Text overlay
+    if (overlay) {
+        ImVec2 textSize = ImGui::CalcTextSize(overlay);
+        ImVec2 textPos = ImVec2(
+            cursorPos.x + (barSize.x - textSize.x) * 0.5f,
+            cursorPos.y + (barSize.y - textSize.y) * 0.5f
+        );
+        
+        // Text shadow
+        drawList->AddText(ImVec2(textPos.x + 1, textPos.y + 1), IM_COL32(0, 0, 0, 200), overlay);
+        // Main text
+        drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), overlay);
+    }
+    
+    // Advance cursor
+    ImGui::Dummy(barSize);
+}
+
+void Application::DrawGlowingButton(const char* label, const ImVec4& glowColor) {
+    float time = ImGui::GetTime();
+    float glowIntensity = 0.5f + 0.3f * sin(time * 2.0f);
+    
+    // Push glowing style
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(glowColor.x * 0.6f, glowColor.y * 0.6f, glowColor.z * 0.6f, 0.8f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(glowColor.x * glowIntensity, glowColor.y * glowIntensity, glowColor.z * glowIntensity, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(glowColor.x, glowColor.y, glowColor.z, 1.0f));
+    
+    ImGui::Button(label);
+    
+    ImGui::PopStyleColor(3);
+    
+    // Draw additional glow effect around the button
+    if (ImGui::IsItemHovered()) {
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        ImVec2 min = ImGui::GetItemRectMin();
+        ImVec2 max = ImGui::GetItemRectMax();
+        
+        ImU32 glowU32 = IM_COL32((int)(glowColor.x * 255), (int)(glowColor.y * 255), (int)(glowColor.z * 255), (int)(glowIntensity * 100));
+        drawList->AddRect(ImVec2(min.x - 2, min.y - 2), ImVec2(max.x + 2, max.y + 2), glowU32, 3.0f, 0, 2.0f);
+    }
+}
+
+void Application::DrawAnimatedSeparator(float width) {
+    float time = ImGui::GetTime();
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+    float separatorWidth = (width < 0) ? ImGui::GetContentRegionAvail().x : width;
+    
+    // Animated line with color shifting
+    for (int i = 0; i < (int)separatorWidth; i += 4) {
+        float progress = (float)i / separatorWidth;
+        ImVec4 color = GetRainbowColor(progress, time * 0.5f);
+        color.w = 0.7f + 0.3f * sin(time * 3.0f + progress * 10.0f);
+        
+        ImU32 lineColor = IM_COL32((int)(color.x * 255), (int)(color.y * 255), (int)(color.z * 255), (int)(color.w * 255));
+        
+        drawList->AddLine(
+            ImVec2(cursorPos.x + i, cursorPos.y),
+            ImVec2(cursorPos.x + std::min(i + 4, (int)separatorWidth), cursorPos.y),
+            lineColor, 2.0f
+        );
+    }
+    
+    ImGui::Dummy(ImVec2(separatorWidth, 2));
+}
+
+void Application::PushPulsingTextStyle(float intensity) {
+    float time = ImGui::GetTime();
+    float pulse = 0.7f + intensity * sin(time * 2.0f);
+    
+    ImVec4 currentTextColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+    ImVec4 pulsedColor = ImVec4(currentTextColor.x * pulse, currentTextColor.y * pulse, currentTextColor.z * pulse, currentTextColor.w);
+    
+    ImGui::PushStyleColor(ImGuiCol_Text, pulsedColor);
+}
+
+void Application::PopPulsingTextStyle() {
+    ImGui::PopStyleColor();
+}
+
+void Application::DrawScanlines(const ImVec2& pos, const ImVec2& size, float intensity) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    float time = ImGui::GetTime();
+    
+    // Animated scanlines moving down
+    int lineSpacing = 3;
+    float offset = fmod(time * 30.0f, lineSpacing * 2);
+    
+    for (int y = 0; y < (int)size.y; y += lineSpacing) {
+        float adjustedY = y + offset;
+        if (adjustedY < size.y) {
+            float alpha = intensity * (0.5f + 0.3f * sin(time * 2.0f + y * 0.1f));
+            ImU32 lineColor = IM_COL32(0, 255, 255, (int)(alpha * 255));
+            
+            drawList->AddLine(
+                ImVec2(pos.x, pos.y + adjustedY),
+                ImVec2(pos.x + size.x, pos.y + adjustedY),
+                lineColor, 1.0f
+            );
+        }
+    }
+}
+
+void Application::DrawNeonBorder(const ImVec2& min, const ImVec2& max, const ImVec4& color, float thickness) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    float time = ImGui::GetTime();
+    float pulse = 0.7f + 0.3f * sin(time * 3.0f);
+    
+    ImVec4 glowColor = ImVec4(color.x, color.y, color.z, color.w * pulse);
+    ImU32 borderColor = IM_COL32((int)(glowColor.x * 255), (int)(glowColor.y * 255), (int)(glowColor.z * 255), (int)(glowColor.w * 255));
+    
+    // Main border
+    drawList->AddRect(min, max, borderColor, 3.0f, 0, thickness);
+    
+    // Outer glow
+    float glowOffset = 2.0f;
+    ImU32 outerGlow = IM_COL32((int)(color.x * 255), (int)(color.y * 255), (int)(color.z * 255), (int)(color.w * pulse * 100));
+    drawList->AddRect(
+        ImVec2(min.x - glowOffset, min.y - glowOffset),
+        ImVec2(max.x + glowOffset, max.y + glowOffset),
+        outerGlow, 3.0f, 0, thickness + 1.0f
+    );
+}
+
+void Application::DrawRetroGrid(const ImVec2& pos, const ImVec2& size, float spacing, float alpha) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    float time = ImGui::GetTime();
+    
+    // Animated grid with fading effect
+    
+    // Vertical lines
+    for (float x = 0; x < size.x; x += spacing) {
+        float lineAlpha = alpha * (0.3f + 0.2f * sin(time * 2.0f + x * 0.1f));
+        ImU32 lineColor = IM_COL32(0, 255, 255, (int)(lineAlpha * 255));
+        
+        drawList->AddLine(
+            ImVec2(pos.x + x, pos.y),
+            ImVec2(pos.x + x, pos.y + size.y),
+            lineColor, 1.0f
+        );
+    }
+    
+    // Horizontal lines
+    for (float y = 0; y < size.y; y += spacing) {
+        float lineAlpha = alpha * (0.3f + 0.2f * sin(time * 2.0f + y * 0.1f));
+        ImU32 lineColor = IM_COL32(0, 255, 255, (int)(lineAlpha * 255));
+        
+        drawList->AddLine(
+            ImVec2(pos.x, pos.y + y),
+            ImVec2(pos.x + size.x, pos.y + y),
+            lineColor, 1.0f
+        );
+    }
+}
+
+void Application::DrawGlowingPanel(const char* title, const ImVec2& size, const ImVec4& glowColor) {
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+    
+    // Draw neon border around the panel area
+    DrawNeonBorder(cursorPos, ImVec2(cursorPos.x + size.x, cursorPos.y + size.y), glowColor);
+    
+    // Title bar with glow effect
+    if (title && strlen(title) > 0) {
+        ImVec2 titleSize = ImGui::CalcTextSize(title);
+        ImVec2 titlePos = ImVec2(cursorPos.x + 10, cursorPos.y - titleSize.y - 5);
+        
+        // Title background
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        drawList->AddRectFilled(
+            ImVec2(titlePos.x - 5, titlePos.y - 2),
+            ImVec2(titlePos.x + titleSize.x + 5, titlePos.y + titleSize.y + 2),
+            IM_COL32(20, 20, 40, 200), 2.0f
+        );
+        
+        // Glowing title text
+        drawList->AddText(ImVec2(titlePos.x + 1, titlePos.y + 1), IM_COL32(0, 0, 0, 150), title); // Shadow
+        drawList->AddText(titlePos, IM_COL32((int)(glowColor.x * 255), (int)(glowColor.y * 255), (int)(glowColor.z * 255), 255), title);
+    }
+    
+    // Add some breathing room
+    ImGui::Dummy(ImVec2(size.x, 5));
+}
+
+void Application::DrawRetroTitle(const char* text, const ImVec4& color) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+    ImVec2 textSize = ImGui::CalcTextSize(text);
+    float time = ImGui::GetTime();
+    
+    // ASCII border around title
+    std::string line1 = "+" + std::string(strlen(text) + 2, '-') + "+";
+    std::string line2 = "| " + std::string(text) + " |";
+    std::string line3 = "+" + std::string(strlen(text) + 2, '-') + "+";
+    
+    float pulse = 0.7f + 0.3f * sin(time * 2.0f);
+    ImVec4 pulsedColor = ImVec4(color.x * pulse, color.y * pulse, color.z * pulse, color.w);
+    ImU32 titleColor = IM_COL32((int)(pulsedColor.x * 255), (int)(pulsedColor.y * 255), (int)(pulsedColor.z * 255), (int)(pulsedColor.w * 255));
+    
+    // Draw border
+    drawList->AddText(cursorPos, titleColor, line1.c_str());
+    drawList->AddText(ImVec2(cursorPos.x, cursorPos.y + ImGui::GetTextLineHeight()), titleColor, line2.c_str());
+    drawList->AddText(ImVec2(cursorPos.x, cursorPos.y + ImGui::GetTextLineHeight() * 2), titleColor, line3.c_str());
+    
+    ImGui::Dummy(ImVec2(textSize.x + 30, ImGui::GetTextLineHeight() * 3 + 10));
+}
+
+void Application::DrawAnimatedDots(const ImVec2& pos, const ImVec2& size, int count) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    float time = ImGui::GetTime();
+    
+    for (int i = 0; i < count; i++) {
+        float x = pos.x + (float)(i * 97 % (int)size.x); // Pseudo-random distribution
+        float y = pos.y + (float)(i * 71 % (int)size.y);
+        
+        float phase = time * 2.0f + i * 0.1f;
+        float alpha = (sin(phase) + 1.0f) * 0.5f * 0.3f; // Pulsing dots
+        
+        ImU32 dotColor = IM_COL32(0, 255, 255, (int)(alpha * 255));
+        drawList->AddCircleFilled(ImVec2(x, y), 1.0f, dotColor);
+    }
+}
+
+bool Application::BeginRetroWindow(const char* name, bool* p_open, ImGuiWindowFlags flags) {
+    // Push retro window style
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.05f, 0.15f, 0.95f)); // Dark blue background
+    ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.2f, 0.3f, 1.0f)); // Dark cyan title
+    ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.4f, 0.6f, 1.0f)); // Bright cyan when active
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 1.0f, 1.0f, 0.8f)); // Cyan border
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15, 15)); // More padding for better text layout
+    
+    bool result = ImGui::Begin(name, p_open, flags);
+    
+    if (result) {
+        // Add scanlines effect to the window
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+        DrawScanlines(windowPos, windowSize, 0.05f);
+    }
+    
+    return result;
+}
+
+void Application::EndRetroWindow() {
+    ImGui::End();
+    ImGui::PopStyleVar(3); // Pop WindowBorderSize, WindowRounding, WindowPadding
+    ImGui::PopStyleColor(4); // Pop the 4 colors we pushed
 }
 
 void Application::SetupImGuiStyle() {
@@ -816,78 +1159,18 @@ void Application::ApplyTheme(Theme theme) {
     style.DisabledAlpha = 0.6f;
 }
 
-void Application::RenderThemeSelector() {
-    if (ImGui::Begin("Theme Selector", &m_showThemeSelector)) {
-        ImGui::Text("Choose a theme for the visualizer:");
-        ImGui::Separator();
-        
-        const char* themeNames[] = { "Dark", "Light", "Cyber", "Ocean", "Forest", "Sunset" };
-        int currentThemeIndex = static_cast<int>(m_currentTheme);
-        
-        if (ImGui::Combo("Theme", &currentThemeIndex, themeNames, IM_ARRAYSIZE(themeNames))) {
-            m_currentTheme = static_cast<Theme>(currentThemeIndex);
-            ApplyTheme(m_currentTheme);
-        }
-        
-        ImGui::Spacing();
-        
-        // Theme previews with colored rectangles
-        ImGui::Text("Theme Previews:");
-        ImVec2 colorSize(50, 30);
-        
-        if (ImGui::Button("Dark##preview", colorSize)) {
-            m_currentTheme = Theme::Dark;
-            ApplyTheme(m_currentTheme);
-        }
-        ImGui::SameLine();
-        
-        if (ImGui::Button("Light##preview", colorSize)) {
-            m_currentTheme = Theme::Light;
-            ApplyTheme(m_currentTheme);
-        }
-        ImGui::SameLine();
-        
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 1.0f, 0.4f));
-        if (ImGui::Button("Cyber##preview", colorSize)) {
-            m_currentTheme = Theme::Cyberpunk;
-            ApplyTheme(m_currentTheme);
-        }
-        ImGui::PopStyleColor();
-        
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.28f, 0.56f, 1.0f, 0.4f));
-        if (ImGui::Button("Ocean##preview", colorSize)) {
-            m_currentTheme = Theme::Ocean;
-            ApplyTheme(m_currentTheme);
-        }
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.50f, 0.25f, 0.4f));
-        if (ImGui::Button("Forest##preview", colorSize)) {
-            m_currentTheme = Theme::Forest;
-            ApplyTheme(m_currentTheme);
-        }
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.80f, 0.40f, 0.20f, 0.4f));
-        if (ImGui::Button("Sunset##preview", colorSize)) {
-            m_currentTheme = Theme::Sunset;
-            ApplyTheme(m_currentTheme);
-        }
-        ImGui::PopStyleColor();
-        
-        ImGui::Spacing();
-        
-        if (ImGui::Button("Close")) {
-            m_showThemeSelector = false;
-        }
-    }
-    ImGui::End();
-}
+
 
 void Application::RenderAlgorithmInfo() {
-    if (ImGui::Begin("Algorithm Information", &m_showAlgorithmInfo, ImGuiWindowFlags_AlwaysAutoResize)) {
+    if (BeginRetroWindow("Algorithm Information", &m_showAlgorithmInfo, ImGuiWindowFlags_AlwaysAutoResize)) {
+        
+        // Add retro title
+        DrawRetroTitle("ALGORITHM DATABASE");
+        
+        // Add retro grid background
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+        DrawRetroGrid(windowPos, windowSize, 30.0f, 0.05f);
         ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.3f, 1.0f), "Algorithm Visualizer - Educational Tool");
         ImGui::Separator();
         
@@ -936,7 +1219,7 @@ void Application::RenderAlgorithmInfo() {
         ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), 
                           "Use this tool to understand algorithm behavior, complexity, and performance.");
     }
-    ImGui::End();
+    EndRetroWindow();
 }
 
 void Application::RenderLicenses() {
@@ -1107,7 +1390,15 @@ void Application::RenderDevelopers() {
 }
 
 void Application::RenderComparison() {
-    if (ImGui::Begin("Algorithm Comparison & Analysis", &m_showComparison)) {
+    if (BeginRetroWindow("Algorithm Comparison", &m_showComparison, ImGuiWindowFlags_AlwaysAutoResize)) {
+        
+        // Add retro title
+        DrawRetroTitle("ALGORITHM COMPARISON");
+        
+        // Add subtle scanlines
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+        DrawScanlines(windowPos, windowSize, 0.02f);
         ImGui::TextColored(ImVec4(0.3f, 0.8f, 1.0f, 1.0f), "Compare Algorithm Performance");
         ImGui::Separator();
         
@@ -1155,10 +1446,16 @@ void Application::RenderComparison() {
                     ImGui::TableNextColumn(); ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.3f, 1.0f), "O(n log n)");
                     
                     ImGui::EndTable();
-                }
-                
-                ImGui::Spacing();
-                ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.3f, 1.0f), "Space Complexity & Stability");
+                        }
+        
+        ImGui::Spacing();
+        
+        // Animated separator before next section
+        DrawAnimatedSeparator();
+        
+        PushPulsingTextStyle(0.2f);
+        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.3f, 1.0f), "Space Complexity & Stability");
+        PopPulsingTextStyle();
                 
                 if (ImGui::BeginTable("SortingProperties", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
                     ImGui::TableSetupColumn("Algorithm");
@@ -1249,8 +1546,9 @@ void Application::RenderComparison() {
                             performanceRating = 0.2f; // Slow
                         }
                         
-                        ImGui::ProgressBar(performanceRating, ImVec2(-1, 0), 
-                                         fmt::format("{:.1f}ms, {} ops", perf.executionTime, perf.comparisons).c_str());
+                                // Use animated progress bar for performance display
+        DrawAnimatedProgressBar(performanceRating, ImVec2(-1, 20), 
+                         fmt::format("{:.1f}ms, {} ops", perf.executionTime, perf.comparisons).c_str());
                     }
                     
                     ImGui::Spacing();
@@ -1288,11 +1586,19 @@ void Application::RenderComparison() {
         ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), 
                           "Use this comparison tool to understand algorithm trade-offs and choose the best algorithm for your use case.");
     }
-    ImGui::End();
+    EndRetroWindow();
 }
 
 void Application::RenderPerformanceAnalysis() {
-    if (ImGui::Begin("Performance Analysis", &m_showPerformanceAnalysis, ImGuiWindowFlags_None)) {
+    if (BeginRetroWindow("Performance Analysis", &m_showPerformanceAnalysis, ImGuiWindowFlags_AlwaysAutoResize)) {
+        
+        // Add retro title
+        DrawRetroTitle("PERFORMANCE ANALYSIS");
+        
+        // Add subtle scanlines
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+        DrawScanlines(windowPos, windowSize, 0.03f);
         ImGui::TextColored(ImVec4(0.3f, 0.8f, 1.0f, 1.0f), "Real-time Algorithm Performance Monitor");
         ImGui::Separator();
         
@@ -1334,21 +1640,23 @@ void Application::RenderPerformanceAnalysis() {
                 float memoryUsagePercent = std::min(1.0f, totalMemoryKB / 1000.0f); // Scale to percentage
                 
                 ImGui::Text("Algorithm Data: ");
-                ImGui::ProgressBar(memoryUsagePercent, ImVec2(-1, 0), fmt::format("{}KB", totalMemoryKB).c_str());
+                DrawAnimatedProgressBar(memoryUsagePercent, ImVec2(-1, 20), fmt::format("{}KB", totalMemoryKB).c_str());
                 
                 ImGui::Text("Graphics Memory: ");
                 // Estimate graphics memory based on UI elements and arrays
                 int graphicsMemoryKB = 500 + (m_performanceHistory.size() * 10); // Base + history
                 float graphicsPercent = std::min(1.0f, graphicsMemoryKB / 10000.0f);
                 ImGui::PushID("graphics_memory_bar");
-                ImGui::ProgressBar(graphicsPercent, ImVec2(-1, 0), fmt::format("{}KB", graphicsMemoryKB).c_str());
+                DrawAnimatedProgressBar(graphicsPercent, ImVec2(-1, 20), fmt::format("{}KB", graphicsMemoryKB).c_str());
                 ImGui::PopID();
                 
                 ImGui::Spacing();
                 
-                // Current algorithm stats
+                // Current algorithm stats with retro styling
+                PushPulsingTextStyle(0.15f);
                 ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.3f, 1.0f), "Current Algorithm Status");
-                ImGui::Separator();
+                PopPulsingTextStyle();
+                DrawAnimatedSeparator();
                 
                 const char* currentViz = "None";
                 std::string algorithmName = "None";
@@ -1497,7 +1805,7 @@ void Application::RenderPerformanceAnalysis() {
             ImGui::EndTabBar();
         }
     }
-    ImGui::End();
+    EndRetroWindow();
 }
 
 void Application::RenderExportDialog() {

@@ -1,5 +1,6 @@
 #include "algorithms/GraphVisualizer.h"
 #include "audio/AudioManager.h"
+#include "Application.h"  // For Application class
 #include <imgui.h>
 #include <algorithm>
 #include <random>
@@ -29,8 +30,23 @@ void GraphVisualizer::Render() {
     // Right column - split into top (statistics/info) and bottom (graph)
     float rightColumnHeight = ImGui::GetContentRegionAvail().y;
     
-    // Top right - Statistics and Algorithm Info
+    // Top right - Statistics and Algorithm Info with retro styling
+    extern Application* g_application;
+    if (g_application) {
+        // Draw glowing panel border
+        ImVec2 panelPos = ImGui::GetCursorScreenPos();
+        ImVec2 panelSize = ImVec2(ImGui::GetContentRegionAvail().x, rightColumnHeight * 0.35f);
+        g_application->DrawNeonBorder(panelPos, ImVec2(panelPos.x + panelSize.x, panelPos.y + panelSize.y), 
+                                     ImVec4(1.0f, 0.0f, 0.5f, 0.6f)); // Pink border for graphs
+    }
+    
     if (ImGui::BeginChild("TopRightPanel", ImVec2(0, rightColumnHeight * 0.35f), true)) {
+        // Add retro grid background
+        if (g_application) {
+            ImVec2 childPos = ImGui::GetWindowPos();
+            ImVec2 childSize = ImGui::GetWindowSize();
+            g_application->DrawRetroGrid(childPos, childSize, 25.0f, 0.08f);
+        }
         ImGui::Columns(2, "TopRightColumns", true);
         
         // Statistics

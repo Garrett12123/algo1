@@ -1,4 +1,5 @@
 #include "algorithms/SearchVisualizer.h"
+#include "Application.h"  // For Application class
 #include <imgui.h>
 #include <algorithm>
 #include <random>
@@ -83,8 +84,23 @@ void SearchVisualizer::Render() {
     }
     ImGui::EndChild();
     
-    // Bottom right - Visualization
+    // Bottom right - Visualization with retro effects
+    extern Application* g_application;
+    if (g_application) {
+        // Draw glowing panel border for visualization area
+        ImVec2 vizPanelPos = ImGui::GetCursorScreenPos();
+        ImVec2 vizPanelSize = ImGui::GetContentRegionAvail();
+        g_application->DrawNeonBorder(vizPanelPos, ImVec2(vizPanelPos.x + vizPanelSize.x, vizPanelPos.y + vizPanelSize.y), 
+                                     ImVec4(0.0f, 0.8f, 1.0f, 0.4f)); // Cyan border for search visualization
+    }
+    
     if (ImGui::BeginChild("VisualizationPanel", ImVec2(0, 0), true)) {
+        // Add animated dots background
+        if (g_application) {
+            ImVec2 vizPos = ImGui::GetWindowPos();
+            ImVec2 vizSize = ImGui::GetWindowSize();
+            g_application->DrawAnimatedDots(vizPos, vizSize, 35);
+        }
         RenderVisualization();
     }
     ImGui::EndChild();
@@ -290,8 +306,17 @@ void SearchVisualizer::RenderVisualization() {
 }
 
 void SearchVisualizer::RenderStatistics() {
-    ImGui::Text("Search Statistics");
-    ImGui::Separator();
+    // Pulsing statistics header
+    extern Application* g_application;
+    if (g_application) {
+        g_application->PushPulsingTextStyle(0.15f);
+        ImGui::Text("Search Statistics");
+        g_application->PopPulsingTextStyle();
+        g_application->DrawAnimatedSeparator();
+    } else {
+        ImGui::Text("Search Statistics");
+        ImGui::Separator();
+    }
     
     ImGui::Text("Array Size: %d", static_cast<int>(m_array.size()));
     ImGui::Text("Target: %d", m_targetValue);
@@ -313,9 +338,14 @@ void SearchVisualizer::RenderStatistics() {
     if (!m_steps.empty()) {
         ImGui::Text("Step: %zu/%zu", m_currentStep + 1, m_steps.size());
         
-        // Progress bar
+        // Animated progress bar
         float progress = static_cast<float>(m_currentStep) / m_steps.size();
-        ImGui::ProgressBar(progress, ImVec2(-1, 0));
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawAnimatedProgressBar(progress, ImVec2(-1, 25), "");
+        } else {
+            ImGui::ProgressBar(progress, ImVec2(-1, 0));
+        }
     }
 }
 

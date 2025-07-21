@@ -1,5 +1,6 @@
 #include "algorithms/PathfindingVisualizer.h"
 #include "audio/AudioManager.h"
+#include "Application.h"  // For Application class
 #include <imgui.h>
 #include <algorithm>
 #include <cmath>
@@ -35,8 +36,23 @@ void PathfindingVisualizer::Render() {
     // Right column - split into top (statistics/info) and bottom (grid)
     float rightColumnHeight = ImGui::GetContentRegionAvail().y;
     
-    // Top right - Statistics and Algorithm Info
+    // Top right - Statistics and Algorithm Info with retro styling
+    extern Application* g_application;
+    if (g_application) {
+        // Draw glowing panel border
+        ImVec2 panelPos = ImGui::GetCursorScreenPos();
+        ImVec2 panelSize = ImVec2(ImGui::GetContentRegionAvail().x, rightColumnHeight * 0.4f);
+        g_application->DrawNeonBorder(panelPos, ImVec2(panelPos.x + panelSize.x, panelPos.y + panelSize.y), 
+                                     ImVec4(0.0f, 1.0f, 0.0f, 0.6f)); // Green border for pathfinding
+    }
+    
     if (ImGui::BeginChild("TopRightPanel", ImVec2(0, rightColumnHeight * 0.4f), true)) {
+        // Add retro grid background
+        if (g_application) {
+            ImVec2 childPos = ImGui::GetWindowPos();
+            ImVec2 childSize = ImGui::GetWindowSize();
+            g_application->DrawRetroGrid(childPos, childSize, 30.0f, 0.08f);
+        }
         ImGui::Columns(2, "TopRightColumns", true);
         
         // Statistics
@@ -45,8 +61,16 @@ void PathfindingVisualizer::Render() {
         ImGui::NextColumn();
         
         // Algorithm Information
-        ImGui::Text("Algorithm Details");
-        ImGui::Separator();
+        extern Application* g_application;
+        if (g_application) {
+            g_application->PushPulsingTextStyle(0.15f);
+            ImGui::Text("Algorithm Details");
+            g_application->PopPulsingTextStyle();
+            g_application->DrawAnimatedSeparator();
+        } else {
+            ImGui::Text("Algorithm Details");
+            ImGui::Separator();
+        }
         switch (m_currentAlgorithm) {
             case Algorithm::AStar:
                 ImGui::TextWrapped("A* uses both distance traveled and heuristic to find optimal paths efficiently.");
@@ -86,8 +110,22 @@ void PathfindingVisualizer::Render() {
     }
     ImGui::EndChild();
     
-    // Bottom right - Grid Visualization
+    // Bottom right - Grid Visualization with retro effects
+    if (g_application) {
+        // Draw glowing panel border for grid area
+        ImVec2 gridPanelPos = ImGui::GetCursorScreenPos();
+        ImVec2 gridPanelSize = ImGui::GetContentRegionAvail();
+        g_application->DrawNeonBorder(gridPanelPos, ImVec2(gridPanelPos.x + gridPanelSize.x, gridPanelPos.y + gridPanelSize.y), 
+                                     ImVec4(1.0f, 0.5f, 0.0f, 0.4f)); // Orange border for grid
+    }
+    
     if (ImGui::BeginChild("GridPanel", ImVec2(0, 0), true)) {
+        // Add animated dots background
+        if (g_application) {
+            ImVec2 gridPos = ImGui::GetWindowPos();
+            ImVec2 gridSize = ImGui::GetWindowSize();
+            g_application->DrawAnimatedDots(gridPos, gridSize, 40);
+        }
         RenderGrid();
     }
     ImGui::EndChild();
@@ -97,7 +135,14 @@ void PathfindingVisualizer::Render() {
 
 void PathfindingVisualizer::RenderControls() {
     ImGui::Text("Pathfinding Controls");
-    ImGui::Separator();
+    
+    // Animated separator for retro feel
+    extern Application* g_application;
+    if (g_application) {
+        g_application->DrawAnimatedSeparator();
+    } else {
+        ImGui::Separator();
+    }
     
     // Algorithm selection
     if (ImGui::Combo("Algorithm", &m_selectedAlgorithm, m_algorithmNames, 4)) {
@@ -132,12 +177,30 @@ void PathfindingVisualizer::RenderControls() {
     // Playback controls
     ImGui::Text("Playback:");
     if (m_state == AnimationState::Stopped || m_state == AnimationState::Paused) {
-        if (ImGui::Button("Start Search")) {
-            StartPathfinding();
+        // Glowing start button
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawGlowingButton(">> Start Search", ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+            if (ImGui::IsItemClicked()) {
+                StartPathfinding();
+            }
+        } else {
+            if (ImGui::Button("Start Search")) {
+                StartPathfinding();
+            }
         }
     } else if (m_state == AnimationState::Running) {
-        if (ImGui::Button("Pause")) {
-            PausePathfinding();
+        // Glowing pause button
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawGlowingButton("|| Pause", ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+            if (ImGui::IsItemClicked()) {
+                PausePathfinding();
+            }
+        } else {
+            if (ImGui::Button("Pause")) {
+                PausePathfinding();
+            }
         }
     }
     
@@ -167,8 +230,17 @@ void PathfindingVisualizer::RenderControls() {
 }
 
 void PathfindingVisualizer::RenderStatistics() {
-    ImGui::Text("Statistics");
-    ImGui::Separator();
+    // Pulsing statistics header
+    extern Application* g_application;
+    if (g_application) {
+        g_application->PushPulsingTextStyle(0.15f);
+        ImGui::Text("Statistics");
+        g_application->PopPulsingTextStyle();
+        g_application->DrawAnimatedSeparator();
+    } else {
+        ImGui::Text("Statistics");
+        ImGui::Separator();
+    }
     
     ImGui::Text("Cells Explored: %d", m_cellsExplored);
     ImGui::Text("Path Length: %d", m_pathLength);

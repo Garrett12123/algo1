@@ -1,4 +1,5 @@
 #include "algorithms/TreeVisualizer.h"
+#include "Application.h"  // For Application class
 #include <imgui.h>
 #include <algorithm>
 #include <cmath>
@@ -21,8 +22,23 @@ void TreeVisualizer::Render() {
     // Right column - split into top (statistics/info) and bottom (visualization)
     float rightColumnHeight = ImGui::GetContentRegionAvail().y;
     
-    // Top right - Statistics and Algorithm Info
+    // Top right - Statistics and Algorithm Info with retro styling
+    extern Application* g_application;
+    if (g_application) {
+        // Draw glowing panel border
+        ImVec2 panelPos = ImGui::GetCursorScreenPos();
+        ImVec2 panelSize = ImVec2(ImGui::GetContentRegionAvail().x, rightColumnHeight * 0.35f);
+        g_application->DrawNeonBorder(panelPos, ImVec2(panelPos.x + panelSize.x, panelPos.y + panelSize.y), 
+                                     ImVec4(0.6f, 0.0f, 1.0f, 0.6f)); // Purple border for trees
+    }
+    
     if (ImGui::BeginChild("TopRightPanel", ImVec2(0, rightColumnHeight * 0.35f), true)) {
+        // Add retro grid background
+        if (g_application) {
+            ImVec2 childPos = ImGui::GetWindowPos();
+            ImVec2 childSize = ImGui::GetWindowSize();
+            g_application->DrawRetroGrid(childPos, childSize, 25.0f, 0.08f);
+        }
         ImGui::Columns(2, "TopRightColumns", true);
         
         // Statistics
@@ -31,8 +47,16 @@ void TreeVisualizer::Render() {
         ImGui::NextColumn();
         
         // Algorithm Information
-        ImGui::Text("Algorithm Details");
-        ImGui::Separator();
+        extern Application* g_application;
+        if (g_application) {
+            g_application->PushPulsingTextStyle(0.15f);
+            ImGui::Text("Algorithm Details");
+            g_application->PopPulsingTextStyle();
+            g_application->DrawAnimatedSeparator();
+        } else {
+            ImGui::Text("Algorithm Details");
+            ImGui::Separator();
+        }
         switch (m_currentAlgorithm) {
             case TreeAlgorithm::BinarySearchTree:
                 ImGui::TextWrapped("BST maintains the property: left subtree < node < right subtree for efficient searching.");
@@ -80,8 +104,22 @@ void TreeVisualizer::Render() {
     }
     ImGui::EndChild();
     
-    // Bottom right - Tree Visualization
+    // Bottom right - Tree Visualization with retro effects
+    if (g_application) {
+        // Draw glowing panel border for tree visualization area
+        ImVec2 treePanelPos = ImGui::GetCursorScreenPos();
+        ImVec2 treePanelSize = ImGui::GetContentRegionAvail();
+        g_application->DrawNeonBorder(treePanelPos, ImVec2(treePanelPos.x + treePanelSize.x, treePanelPos.y + treePanelSize.y), 
+                                     ImVec4(1.0f, 1.0f, 0.0f, 0.4f)); // Yellow border for tree visualization
+    }
+    
     if (ImGui::BeginChild("TreePanel", ImVec2(0, 0), true)) {
+        // Add animated dots background
+        if (g_application) {
+            ImVec2 treePos = ImGui::GetWindowPos();
+            ImVec2 treeSize = ImGui::GetWindowSize();
+            g_application->DrawAnimatedDots(treePos, treeSize, 25);
+        }
         RenderVisualization();
     }
     ImGui::EndChild();
@@ -309,8 +347,17 @@ void TreeVisualizer::RenderVisualization() {
 }
 
 void TreeVisualizer::RenderStatistics() {
-    ImGui::Text("Tree Statistics");
-    ImGui::Separator();
+    // Pulsing statistics header
+    extern Application* g_application;
+    if (g_application) {
+        g_application->PushPulsingTextStyle(0.15f);
+        ImGui::Text("Tree Statistics");
+        g_application->PopPulsingTextStyle();
+        g_application->DrawAnimatedSeparator();
+    } else {
+        ImGui::Text("Tree Statistics");
+        ImGui::Separator();
+    }
     
     if (m_currentAlgorithm == TreeAlgorithm::MinHeap || m_currentAlgorithm == TreeAlgorithm::MaxHeap) {
         ImGui::Text("Heap Size: %zu", m_heap.size());
@@ -337,9 +384,14 @@ void TreeVisualizer::RenderStatistics() {
     if (!m_steps.empty()) {
         ImGui::Text("Step: %zu/%zu", m_currentStep + 1, m_steps.size());
         
-        // Progress bar
+        // Animated progress bar
         float progress = static_cast<float>(m_currentStep) / m_steps.size();
-        ImGui::ProgressBar(progress, ImVec2(-1, 0));
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawAnimatedProgressBar(progress, ImVec2(-1, 25), "");
+        } else {
+            ImGui::ProgressBar(progress, ImVec2(-1, 0));
+        }
     }
 }
 

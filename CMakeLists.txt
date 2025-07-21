@@ -114,10 +114,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     OpenAL::OpenAL
 )
 
-# Copy resources (if exists)
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources")
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
+# Resources directory removed - using enhanced default fonts instead
 
 # Install target
 install(TARGETS ${PROJECT_NAME} DESTINATION bin) 

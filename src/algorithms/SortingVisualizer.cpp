@@ -1,6 +1,7 @@
 #include "algorithms/SortingVisualizer.h"
 #include "audio/AudioManager.h"
 #include "utils/Timer.h"
+#include "Application.h"  // For Application class
 
 #include <imgui.h>
 #include <implot.h>
@@ -46,8 +47,23 @@ void SortingVisualizer::Render() {
     // Right column - split into top (statistics/info) and bottom (visualization)
     float rightColumnHeight = ImGui::GetContentRegionAvail().y;
     
-    // Top right - Statistics and Algorithm Info
+    // Top right - Statistics and Algorithm Info with retro styling
+    extern Application* g_application;
+    if (g_application) {
+        // Draw glowing panel border
+        ImVec2 panelPos = ImGui::GetCursorScreenPos();
+        ImVec2 panelSize = ImVec2(ImGui::GetContentRegionAvail().x, rightColumnHeight * 0.35f);
+        g_application->DrawNeonBorder(panelPos, ImVec2(panelPos.x + panelSize.x, panelPos.y + panelSize.y), 
+                                     ImVec4(0.0f, 1.0f, 1.0f, 0.6f));
+    }
+    
     if (ImGui::BeginChild("TopRightPanel", ImVec2(0, rightColumnHeight * 0.35f), true)) {
+        // Add retro grid background
+        if (g_application) {
+            ImVec2 childPos = ImGui::GetWindowPos();
+            ImVec2 childSize = ImGui::GetWindowSize();
+            g_application->DrawRetroGrid(childPos, childSize, 25.0f, 0.08f);
+        }
         ImGui::Columns(2, "TopRightColumns", true);
         
         // Statistics
@@ -56,8 +72,16 @@ void SortingVisualizer::Render() {
         ImGui::NextColumn();
         
         // Algorithm Information
-        ImGui::Text("Algorithm Details");
-        ImGui::Separator();
+        extern Application* g_application;
+        if (g_application) {
+            g_application->PushPulsingTextStyle(0.15f);
+            ImGui::Text("Algorithm Details");
+            g_application->PopPulsingTextStyle();
+            g_application->DrawAnimatedSeparator();
+        } else {
+            ImGui::Text("Algorithm Details");
+            ImGui::Separator();
+        }
         switch (m_currentAlgorithm) {
             case SortingAlgorithm::BubbleSort:
                 ImGui::TextWrapped("Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if wrong order.");
@@ -110,8 +134,22 @@ void SortingVisualizer::Render() {
     }
     ImGui::EndChild();
     
-    // Bottom right - Visualization
+    // Bottom right - Visualization with retro effects
+    if (g_application) {
+        // Draw glowing panel border for visualization area
+        ImVec2 vizPanelPos = ImGui::GetCursorScreenPos();
+        ImVec2 vizPanelSize = ImGui::GetContentRegionAvail();
+        g_application->DrawNeonBorder(vizPanelPos, ImVec2(vizPanelPos.x + vizPanelSize.x, vizPanelPos.y + vizPanelSize.y), 
+                                     ImVec4(1.0f, 0.0f, 1.0f, 0.4f)); // Magenta border
+    }
+    
     if (ImGui::BeginChild("VisualizationPanel", ImVec2(0, 0), true)) {
+        // Add animated dots background
+        if (g_application) {
+            ImVec2 vizPos = ImGui::GetWindowPos();
+            ImVec2 vizSize = ImGui::GetWindowSize();
+            g_application->DrawAnimatedDots(vizPos, vizSize, 30);
+        }
         RenderVisualization();
     }
     ImGui::EndChild();
@@ -121,7 +159,14 @@ void SortingVisualizer::Render() {
 
 void SortingVisualizer::RenderControls() {
     ImGui::Text("Sorting Controls");
-    ImGui::Separator();
+    
+    // Animated separator for retro feel
+    extern Application* g_application;
+    if (g_application) {
+        g_application->DrawAnimatedSeparator();
+    } else {
+        ImGui::Separator();
+    }
     
     // Algorithm selection
     if (ImGui::Combo("Algorithm", &m_selectedAlgorithm, m_algorithmNames, 9)) {
@@ -181,12 +226,30 @@ void SortingVisualizer::RenderControls() {
     ImGui::Text("Playback Controls:");
     
     if (m_state == AnimationState::Stopped || m_state == AnimationState::Paused) {
-        if (ImGui::Button("Start")) {
-            StartSorting();
+        // Glowing start button
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawGlowingButton(">> Start", ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+            if (ImGui::IsItemClicked()) {
+                StartSorting();
+            }
+        } else {
+            if (ImGui::Button("Start")) {
+                StartSorting();
+            }
         }
     } else if (m_state == AnimationState::Running) {
-        if (ImGui::Button("Pause")) {
-            PauseSorting();
+        // Glowing pause button
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawGlowingButton("|| Pause", ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+            if (ImGui::IsItemClicked()) {
+                PauseSorting();
+            }
+        } else {
+            if (ImGui::Button("Pause")) {
+                PauseSorting();
+            }
         }
     }
     
@@ -214,17 +277,35 @@ void SortingVisualizer::RenderControls() {
     
 
     
-    // Progress bar
+    // Animated progress bar with retro effects
     if (!m_sortingSteps.empty()) {
         float progress = static_cast<float>(m_currentStepIndex) / static_cast<float>(m_sortingSteps.size());
-        ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), 
-                          fmt::format("Step {}/{}", m_currentStepIndex, m_sortingSteps.size()).c_str());
+        
+        // Get application instance to access retro UI effects
+        extern Application* g_application;
+        if (g_application) {
+            g_application->DrawAnimatedProgressBar(progress, ImVec2(-1, 25), 
+                fmt::format("Step {}/{}", m_currentStepIndex, m_sortingSteps.size()).c_str());
+        } else {
+            // Fallback to standard progress bar
+            ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), 
+                              fmt::format("Step {}/{}", m_currentStepIndex, m_sortingSteps.size()).c_str());
+        }
     }
 }
 
 void SortingVisualizer::RenderStatistics() {
-    ImGui::Text("Statistics");
-    ImGui::Separator();
+    // Pulsing statistics header
+    extern Application* g_application;
+    if (g_application) {
+        g_application->PushPulsingTextStyle(0.15f);
+        ImGui::Text("Statistics");
+        g_application->PopPulsingTextStyle();
+        g_application->DrawAnimatedSeparator();
+    } else {
+        ImGui::Text("Statistics");
+        ImGui::Separator();
+    }
     
     ImGui::Text("Comparisons: %d", m_comparisons);
     ImGui::Text("Swaps: %d", m_swaps);

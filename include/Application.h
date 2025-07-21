@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <imgui.h>  // For ImVec4, ImVec2 types
 
 struct GLFWwindow;
 
@@ -27,6 +28,24 @@ public:
 
     // Performance tracking - called by visualizers
     void ReportAlgorithmPerformance(const std::string& algorithmName, double time, int comparisons, int swaps = 0);
+
+    // Retro UI Effect helpers (public for visualizers)
+    ImVec4 GetRainbowColor(float progress, float time);
+    void DrawAnimatedProgressBar(float progress, const ImVec2& size, const char* overlay = nullptr);
+    void DrawGlowingButton(const char* label, const ImVec4& glowColor);
+    void DrawAnimatedSeparator(float width = -1.0f);
+    void PushPulsingTextStyle(float intensity = 0.3f);
+    void PopPulsingTextStyle();
+    
+    // Additional retro effects
+    void DrawScanlines(const ImVec2& pos, const ImVec2& size, float intensity = 0.1f);
+    void DrawNeonBorder(const ImVec2& min, const ImVec2& max, const ImVec4& color, float thickness = 2.0f);
+    void DrawRetroGrid(const ImVec2& pos, const ImVec2& size, float spacing = 20.0f, float alpha = 0.1f);
+    void DrawGlowingPanel(const char* title, const ImVec2& size, const ImVec4& glowColor);
+    void DrawRetroTitle(const char* text, const ImVec4& color = ImVec4(0.0f, 1.0f, 1.0f, 1.0f));
+    void DrawAnimatedDots(const ImVec2& pos, const ImVec2& size, int count = 50);
+    bool BeginRetroWindow(const char* name, bool* p_open = nullptr, ImGuiWindowFlags flags = 0);
+    void EndRetroWindow();
 
 private:
     void Update();
@@ -84,7 +103,7 @@ private:
     bool InitializeImGui();
     void SetupImGuiStyle();
     void ApplyTheme(Theme theme);
-    void RenderThemeSelector();
+
     void RenderAlgorithmInfo();
     void RenderLicenses();
     void RenderDevelopers();
@@ -100,7 +119,7 @@ private:
     AppState m_appState = AppState::Splash;
     VisualizationMode m_currentVisualizer = VisualizationMode::Sorting;
     Theme m_currentTheme = Theme::Dark;
-    bool m_showThemeSelector = false;
+
     
     // Splash screen state
     float m_splashStartTime = 0.0f;
