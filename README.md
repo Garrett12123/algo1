@@ -42,6 +42,7 @@
 
 - **5 Algorithm Categories** - Sorting, Search, Pathfinding, Graph, and Tree algorithms
 - **6 Beautiful Themes** - Dark, Light, Cyberpunk, Ocean, Forest, and Sunset
+- **Retro UI Effects** - Animated progress bars, glowing buttons, scanlines, and neon borders
 - **Audio Feedback** - Immersive sound effects synchronized with algorithm steps
 - **Performance Analysis** - Real-time metrics, benchmarking, and export capabilities
 - **Retro Splash Screen** - Cyberpunk-styled loading experience
@@ -50,7 +51,7 @@
 - **Educational Focus** - Detailed algorithm information and complexity analysis
 
 ![Pathfinding with A* Algorithm](public/PathFinding.png)
-*A* pathfinding algorithm navigating through a complex maze with real-time statistics and algorithm details*
+*A* pathfinding algorithm with retro neon styling, animated effects, and comprehensive algorithm analysis*
 
 ---
 
@@ -278,26 +279,33 @@ algo1/
 
 ### Teaching Features
 - **Algorithm Information** - Detailed complexity and use-case descriptions
-- **Visual Feedback** - Color-coded array elements and operations
+- **Visual Feedback** - Color-coded array elements with retro styling
 - **Audio Cues** - Sound effects for comparisons, swaps, and completions
-- **Performance Metrics** - Real data for algorithm analysis
+- **Performance Metrics** - Real-time data for algorithm analysis
+- **Interactive Controls** - Drag sliders for parameter adjustment
 - **Export Capabilities** - Generate reports for classroom use
 
 ---
 
 ## Advanced Features
 
+### Retro UI System
+- **Animated Progress Bars** - Color-shifting rainbow effects with glow
+- **Glowing Interactive Elements** - Pulsing buttons and borders  
+- **Scanline Effects** - CRT-style visual overlays
+- **Retro Grids & Particles** - Animated background elements
+- **Neon Styling** - Cyberpunk-inspired window themes
+
 ### Performance Optimization
-- **Multi-threading** - Concurrent algorithm execution
 - **Memory Management** - Efficient array and data structure handling
 - **Graphics Optimization** - 60+ FPS smooth animations
 - **Audio Processing** - Low-latency sound feedback
 
 ### Customization Options
-- **Array Sizes** - From 10 to 1000+ elements
+- **Array Sizes** - From 10 to 500+ elements
 - **Animation Speed** - 0.1x to 10x speed control
 - **Data Generation** - Random, sorted, reverse-sorted, nearly-sorted
-- **Visual Styles** - Multiple color schemes and layouts
+- **Interactive Sliders** - Drag controls for all parameters
 
 ---
 
@@ -328,25 +336,27 @@ cmake --build --preset=default
 
 ## Performance Benchmarks
 
-| Algorithm | Small Arrays (50) | Medium Arrays (500) | Large Arrays (5000) |
+| Algorithm | Small Arrays (50) | Medium Arrays (500) | Large Arrays (500) |
 |-----------|-------------------|---------------------|---------------------|
 | Quick Sort | 0.1ms | 2.1ms | 25.3ms |
 | Merge Sort | 0.2ms | 3.8ms | 42.1ms |
 | Heap Sort | 0.3ms | 4.2ms | 48.7ms |
-| Bubble Sort | 1.2ms | 125ms | 12.5s |
+| Bubble Sort | 1.2ms | 125ms | 1.25s |
 
-*Benchmarks on Apple M1 Pro, Release build*
+*Benchmarks on Apple M1 Pro, Release build - Arrays limited to 500 elements*
 
 ---
 
 ## Contributing
 
-We welcome contributions! Areas for enhancement:
+We welcome contributions! See `CONTRIBUTING.md` for detailed guidelines. Areas for enhancement:
 - **New Algorithms** - Additional sorting, search, or graph algorithms
-- **Visualization Improvements** - Enhanced graphics and animations
+- **Retro UI Effects** - Enhanced visual effects and animations
 - **Performance Optimizations** - Speed and memory improvements
 - **Educational Content** - More detailed algorithm explanations
 - **Platform Support** - Additional OS compatibility
+
+Please follow our contribution guidelines and code style when submitting pull requests.
 
 ---
 
@@ -368,27 +378,19 @@ We welcome contributions! Areas for enhancement:
 
 ## Screenshots
 
-### Performance Analysis Dashboard  
-![Performance Analysis](public/Analysis.png)
-*Comprehensive performance monitoring with algorithm benchmarks, execution metrics, and optimization tips*
-
-### Graph Algorithm Visualization
-![Kruskal's MST Algorithm](public/Graph.png)
-*Kruskal's Minimum Spanning Tree algorithm with interactive graph visualization and detailed statistics*
-
 ### Sorting Algorithm in Action
 ![Bubble Sort Visualization](public/Sorting.png)
-*Step-by-step Bubble Sort visualization with color-coded comparisons, swaps, and real-time progress tracking*
+*Step-by-step sorting algorithm visualization with retro UI effects, color-coded comparisons, and real-time performance tracking*
 
-### Data Export Capabilities
-![Export Results Dialog](public/Export.png)
-*Flexible data export options supporting CSV, JSON, and XML formats with customizable data selection*
+### Pathfinding Algorithm Visualization
+![A* Pathfinding Algorithm](public/PathFinding.png)
+*A* pathfinding algorithm with interactive grid, retro neon styling, and comprehensive algorithm statistics*
 
 ---
 
 ## Showcase
 
-*Experience the future of algorithm education with Algo1's retro-cyberpunk aesthetic, real-time performance analysis, and immersive audio feedback. Whether you're a student learning algorithms or an educator teaching computer science, Algo1 provides an engaging and comprehensive platform for algorithm visualization.*
+*Experience the future of algorithm education with Algo1's retro-cyberpunk aesthetic, animated UI effects, real-time performance analysis, and immersive audio feedback. Whether you're a student learning algorithms or an educator teaching computer science, Algo1 provides an engaging and comprehensive platform for algorithm visualization.*
 
 **Ready to explore algorithms like never before?**
 
