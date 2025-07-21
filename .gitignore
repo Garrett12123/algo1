@@ -1,0 +1,176 @@
+# Build directories
+/build/
+/out/
+/cmake-build-*/
+/bin/
+/lib/
+
+# vcpkg
+/vcpkg_installed/
+/vcpkg/
+.vcpkg-cache
+
+# Generated files
+*.user
+*.sln.docstates
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.ko
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.dmg
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# IDE files
+.vscode/
+.vs/
+*.code-workspace
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserdata
+xcschemes/
+*.moved-aside
+DerivedData/
+*.xccheckout
+*.xcscmblueprint
+
+# JetBrains IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Qt Creator
+CMakeLists.txt.user*
+
+# Visual Studio Code
+.vscode/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Runtime generated files
+imgui.ini
+
+# Package managers
+conan/
+node_modules/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Coverage files
+*.gcov
+*.gcno
+*.gcda
+
+# Profiling files
+*.prof
+gmon.out
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Dependencies
+third_party/
+external/
+libs/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Documentation build
+/docs/_build/
+/docs/build/
+
+# Resources that might contain sensitive data
+/resources/private/
+/assets/private/ 

@@ -1,0 +1,16 @@
+{
+  "name": "cpp-algorithms-visualizer",
+  "version-string": "2.0.0",
+  "description": "Modern C++ Algorithm Visualizer with GUI using Dear ImGui",
+  "dependencies": [
+    "fmt",
+    {
+      "name": "imgui",
+      "features": ["docking-experimental", "glfw-binding", "opengl3-binding"]
+    },
+    "glfw3",
+    "implot",
+    "openal-soft"
+  ],
+  "builtin-baseline": "0aff7f5be0ee5933c20d92276499af354ddb7dce"
+} 
