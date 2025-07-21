@@ -50,7 +50,7 @@ export VCPKG_ROOT=$(pwd)
 
 2. **Clone and build the project**:
 ```bash
-git clone https://github.com/YOUR_USERNAME/algo1.git
+git clone https://github.com/Garrett12123/algo1.git
 cd algo1
 
 # Configure with vcpkg
@@ -68,7 +68,7 @@ cmake --build --preset=default
 If you already have vcpkg installed and `VCPKG_ROOT` set:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/algo1.git
+git clone https://github.com/Garrett12123/algo1.git
 cd algo1
 cmake --preset=default && cmake --build --preset=default
 ./build/default/algo1
@@ -81,7 +81,7 @@ If you prefer installing dependencies manually:
 **macOS with Homebrew**:
 ```bash
 brew install cmake ninja fmt glfw imgui openal-soft
-git clone https://github.com/YOUR_USERNAME/algo1.git
+git clone https://github.com/Garrett12123/algo1.git
 cd algo1
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
@@ -93,7 +93,7 @@ cmake --build build
 sudo apt update
 sudo apt install cmake ninja-build libfmt-dev libglfw3-dev libopenal-dev
 # Note: You may need to install ImGui and ImPlot manually
-git clone https://github.com/YOUR_USERNAME/algo1.git
+git clone https://github.com/Garrett12123/algo1.git
 cd algo1
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
@@ -103,7 +103,7 @@ cmake --build build
 **Windows with Visual Studio**:
 ```bash
 # Install vcpkg first, then:
-git clone https://github.com/YOUR_USERNAME/algo1.git
+git clone https://github.com/Garrett12123/algo1.git
 cd algo1
 cmake --preset=default
 cmake --build --preset=default
@@ -342,7 +342,7 @@ We welcome contributions! Areas for enhancement:
 **🎮 Ready to explore algorithms like never before?**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/algo1.git
+git clone https://github.com/Garrett12123/algo1.git
 cd algo1
 cmake --preset=default && cmake --build --preset=default
 ./build/default/algo1
